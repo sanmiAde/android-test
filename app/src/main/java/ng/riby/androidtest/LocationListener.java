@@ -1,9 +1,8 @@
 package ng.riby.androidtest;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
+
+
 import android.content.Context;
 import android.location.GnssStatus;
 import android.location.GpsStatus;
@@ -11,6 +10,10 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 
 class LocationListener implements LifecycleObserver, android.location.LocationListener {
 
