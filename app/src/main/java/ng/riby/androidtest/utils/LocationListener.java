@@ -1,4 +1,4 @@
-package ng.riby.androidtest;
+package ng.riby.androidtest.utils;
 
 import android.annotation.SuppressLint;
 
@@ -15,7 +15,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 
-class LocationListener implements LifecycleObserver, android.location.LocationListener {
+public class LocationListener implements LifecycleObserver, android.location.LocationListener {
 
     private Lifecycle lifecycle;
 
@@ -41,7 +41,7 @@ class LocationListener implements LifecycleObserver, android.location.LocationLi
                 @Override
                 public void onStarted() {
                     super.onStarted();
-                    onGPSStatusChangedListener.gpsStatusChanged("Searching For GPS");
+                    onGPSStatusChangedListener.gpsStatusChanged("Searching For GPS connection. Please note GPS does work under a roof.");
                 }
 
                 @Override
@@ -52,7 +52,7 @@ class LocationListener implements LifecycleObserver, android.location.LocationLi
                 @Override
                 public void onFirstFix(int ttffMillis) {
                     super.onFirstFix(ttffMillis);
-                    onGPSStatusChangedListener.gpsStatusChanged("GPS found");
+                    onGPSStatusChangedListener.gpsStatusChanged("GPS found.");
                 }
 
                 @Override
@@ -66,10 +66,10 @@ class LocationListener implements LifecycleObserver, android.location.LocationLi
                 public void onGpsStatusChanged(int i) {
                     switch (i) {
                         case GpsStatus.GPS_EVENT_STARTED:
-                            onGPSStatusChangedListener.gpsStatusChanged("Searching For GPS");
+                            onGPSStatusChangedListener.gpsStatusChanged("Searching For GPS connection. Please note GPS does work under a roof.");
                             break;
                         case GpsStatus.GPS_EVENT_FIRST_FIX:
-                            onGPSStatusChangedListener.gpsStatusChanged("GPS found");
+                            onGPSStatusChangedListener.gpsStatusChanged("GPS connection found.");
                     }
                 }
             });
@@ -118,6 +118,9 @@ class LocationListener implements LifecycleObserver, android.location.LocationLi
         this.onLocationRetrievedListener = onLocationRetrievedListener;
     }
 
+    /***
+     * Since requestLocationUpdates continously gets GPS location. We remove the listener after getting the first GPS response.
+     */
     public void removeOnLocationChangedListener(){
         this.onLocationRetrievedListener = null;
     }

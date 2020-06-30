@@ -1,8 +1,8 @@
-package ng.riby.androidtest;
+package ng.riby.androidtest.utils;
 
 import android.location.Location;
 
-interface OnLocationRetrievedListener {
+public interface OnLocationRetrievedListener {
 
      void locationRecieved(Location location);
 }

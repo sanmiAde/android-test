@@ -1,4 +1,4 @@
-package ng.riby.androidtest;
+package ng.riby.androidtest.ui;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -11,10 +11,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import ng.riby.androidtest.R;
+import ng.riby.androidtest.model.UserLocation;
+import ng.riby.androidtest.utils.LocationListener;
+import ng.riby.androidtest.utils.OnGPSStatusChangedListener;
+import ng.riby.androidtest.utils.OnLocationRetrievedListener;
 
 public class MainActivity extends AppCompatActivity implements OnGPSStatusChangedListener {
 
@@ -24,12 +32,16 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
 
     private UserLocation userLocation;
 
+    private MainViewModel viewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         if (checkPermission()) {
+            viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
             userLocation = new UserLocation();
             locationListener = new LocationListener(this, getLifecycle(), this);
 
@@ -63,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
             @Override
             public void onClick(View view) {
                 stopButton.setVisibility(View.VISIBLE);
+
                 locationListener.addOnLocationChangedListener(new OnLocationRetrievedListener() {
                     @Override
                     public void locationRecieved(Location location) {
@@ -72,9 +85,10 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
                         userLocation.setOriginLat(roundedLat);
                         userLocation.setOriginLong(roundedLon);
 
+
                         locationListener.removeOnLocationChangedListener();
 
-                        Log.d("testing2", userLocation.toString());
+
                     }
                 });
                 locationListener.getUserLocation();
@@ -95,7 +109,14 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
 
                         locationListener.removeOnLocationChangedListener();
 
-                        Log.d("testing1", userLocation.toString());
+                        if(userLocation.hasLocationBeenGotten()){
+                            viewModel.setUserLocation(userLocation);
+                            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+
+                            startActivity(intent);
+                        }
+
+
                     }
                 });
                 locationListener.getUserLocation();
@@ -121,6 +142,9 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+                    userLocation = new UserLocation();
                     locationListener = new LocationListener(this, getLifecycle(), this);
                     initClickListeners();
 
