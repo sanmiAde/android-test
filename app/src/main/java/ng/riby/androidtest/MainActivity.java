@@ -2,6 +2,7 @@ package ng.riby.androidtest;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
 
         final Button stopButton  = findViewById(R.id.btn_stop);
 
+        final Button mapButton = findViewById(R.id.btn_map);
+
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,6 +101,18 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
                 locationListener.getUserLocation();
             }
         });
+
+
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+
+                startActivity(intent);
+            }
+        });
+
 
     }
 
