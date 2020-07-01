@@ -27,9 +27,10 @@ public class LocationListener implements LifecycleObserver, android.location.Loc
 
     public LocationListener(Context context, Lifecycle lifecycle, OnGPSStatusChangedListener onGPSStatusChangedListener) {
         this.lifecycle = lifecycle;
-        this.lifecycle.addObserver(this);
         this.onGPSStatusChangedListener = onGPSStatusChangedListener;
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        this.lifecycle.addObserver(this);
+
     }
 
     @SuppressLint("MissingPermission")
@@ -41,7 +42,10 @@ public class LocationListener implements LifecycleObserver, android.location.Loc
                 @Override
                 public void onStarted() {
                     super.onStarted();
-                    onGPSStatusChangedListener.gpsStatusChanged("Searching For GPS connection. Please note GPS does work under a roof.");
+                    if(onGPSStatusChangedListener != null){
+                        onGPSStatusChangedListener.gpsStatusChanged("Searching For GPS connection. Please note GPS does not work under a roof.");
+                    }
+
                 }
 
                 @Override
@@ -52,7 +56,10 @@ public class LocationListener implements LifecycleObserver, android.location.Loc
                 @Override
                 public void onFirstFix(int ttffMillis) {
                     super.onFirstFix(ttffMillis);
-                    onGPSStatusChangedListener.gpsStatusChanged("GPS found.");
+                    if(onGPSStatusChangedListener != null){
+                        onGPSStatusChangedListener.gpsStatusChanged("GPS found.");
+                    }
+
                 }
 
                 @Override
@@ -88,7 +95,10 @@ public class LocationListener implements LifecycleObserver, android.location.Loc
      */
     @Override
     public void onLocationChanged(Location location) {
-        onLocationRetrievedListener.locationRecieved(location);
+        if(onLocationRetrievedListener != null){
+            onLocationRetrievedListener.locationRecieved(location);
+        }
+
 
         locationManager.removeUpdates(this);
     }

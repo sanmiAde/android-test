@@ -7,16 +7,15 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import ng.riby.androidtest.R;
 import ng.riby.androidtest.model.UserLocation;
@@ -33,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
     private UserLocation userLocation;
 
     private MainViewModel viewModel;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                stopButton.setVisibility(View.VISIBLE);
+
 
                 locationListener.addOnLocationChangedListener(new OnLocationRetrievedListener() {
                     @Override
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
 
 
                         locationListener.removeOnLocationChangedListener();
+                        stopButton.setVisibility(View.VISIBLE);
 
 
                     }
@@ -128,9 +130,14 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                if(userLocation.hasLocationBeenGotten()){
+                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
 
-                startActivity(intent);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(MainActivity.this, "You don't have any location saved currently", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -178,12 +185,9 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
                 .show();
     }
 
+
     @Override
     public void gpsStatusChanged(String message) {
-
-
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
-
 }
