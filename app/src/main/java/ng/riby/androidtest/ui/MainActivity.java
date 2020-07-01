@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
     private MainViewModel viewModel;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
         if (checkPermission()) {
             viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-            userLocation = new UserLocation();
+            userLocation = viewModel.getUserLocation();
             locationListener = new LocationListener(this, getLifecycle(), this);
 
             initClickListeners();
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
     private void initClickListeners() {
         final Button startButton = findViewById(R.id.btn_start);
 
-        final Button stopButton  = findViewById(R.id.btn_stop);
+        final Button stopButton = findViewById(R.id.btn_stop);
 
         final Button mapButton = findViewById(R.id.btn_map);
 
@@ -80,16 +79,12 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
                 locationListener.addOnLocationChangedListener(new OnLocationRetrievedListener() {
                     @Override
                     public void locationRecieved(Location location) {
-                        Double roundedLat = Math.round(location.getLatitude() * 10000.0)/ 10000.0;
-                        Double  roundedLon = Math.round(location.getLongitude() * 10000.0)/ 10000.0;
-
-                        userLocation.setOriginLat(roundedLat);
-                        userLocation.setOriginLong(roundedLon);
-
+                        viewModel.setOrginLocation(location);
 
                         locationListener.removeOnLocationChangedListener();
                         stopButton.setVisibility(View.VISIBLE);
 
+                        Toast.makeText(MainActivity.this, "Origin location gotten.", Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -99,20 +94,17 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 locationListener.addOnLocationChangedListener(new OnLocationRetrievedListener() {
                     @Override
                     public void locationRecieved(Location location) {
-                        Double roundedLat = Math.round(location.getLatitude() * 10000.0)/ 10000.0;
-                        Double  roundedLon = Math.round(location.getLongitude() * 10000.0)/ 10000.0;
+                        viewModel.setCurrentLocation(location);
 
-                        userLocation.setCurrentLat(roundedLat);
-                        userLocation.setCurrentLong(roundedLon);
-
+                        Toast.makeText(MainActivity.this, "current location gotten.", Toast.LENGTH_SHORT).show();
                         locationListener.removeOnLocationChangedListener();
 
-                        if(userLocation.hasLocationBeenGotten()){
-                            viewModel.setUserLocation(userLocation);
+                        if (viewModel.hasLocationBeenGotten()) {
+                            viewModel.saveUserLocation();
                             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
 
                             startActivity(intent);
@@ -130,11 +122,11 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
             @Override
             public void onClick(View v) {
 
-                if(userLocation.hasLocationBeenGotten()){
+                if (viewModel.hasLocationBeenGotten()) {
                     Intent intent = new Intent(MainActivity.this, MapsActivity.class);
 
                     startActivity(intent);
-                }else{
+                } else {
                     Toast.makeText(MainActivity.this, "You don't have any location saved currently", Toast.LENGTH_SHORT).show();
                 }
 
@@ -151,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements OnGPSStatusChange
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-                    userLocation = new UserLocation();
+                    userLocation = viewModel.getUserLocation();
                     locationListener = new LocationListener(this, getLifecycle(), this);
                     initClickListeners();
 

@@ -33,11 +33,21 @@ public class UserLocation implements Parcelable {
     Double currentLong;
 
     public UserLocation() {
-        this.originLat = 0.0;
-        this.originLong = 0.0;
-        this.currentLat = 0.0;
-        this.currentLong = 0.0;
+        this.originLat = Double.MIN_VALUE;
+        this.originLong =Double.MIN_VALUE;
+        this.currentLat = Double.MIN_VALUE;
+        this.currentLong = Double.MIN_VALUE;
     }
+
+
+    /***
+     * THis method checks if both the user current and orgin location has been gotten.
+     * @return Boolean used to determine if user location has been gotten completely.
+     */
+    public boolean hasLocationBeenGotten() {
+        return originLat != Double.MIN_VALUE && originLong != Double.MIN_VALUE && currentLat != Double.MIN_VALUE && currentLong != Double.MIN_VALUE;
+    }
+
 
     protected UserLocation(Parcel in) {
         this.originLat = (Double) in.readValue(Double.class.getClassLoader());
@@ -78,13 +88,7 @@ public class UserLocation implements Parcelable {
         this.currentLong = currentLong;
     }
 
-    /***
-     * THis method checks if both the user current and orgin location has been gotten.
-     * @return Boolean used to determine if user location has been gotten completely.
-     */
-    public boolean hasLocationBeenGotten() {
-        return originLat != 0.0 && originLong != 0 && currentLat != 0 && currentLong != 0;
-    }
+
 
     @Override
     public int describeContents() {

@@ -50,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
-        viewModel.getUserLocation().observe(this, new Observer<UserLocation>() {
+        viewModel.getLocation().observe(this, new Observer<UserLocation>() {
             @Override
             public void onChanged(UserLocation userLocation) {
 
